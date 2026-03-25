@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
-type Page = "welcome" | "guess" | "result";
+const SITE_URL = "https://gender-party-website-2--preview.poehali.dev/";
+
+type Page = "welcome" | "guess" | "result" | "qr";
 type Choice = "boy" | "girl" | null;
 
 function FloatingEmoji({ emoji, style }: { emoji: string; style: React.CSSProperties }) {
@@ -41,7 +44,69 @@ function ConfettiPiece({ index }: { index: number }) {
   );
 }
 
-function WelcomePage({ onNext }: { onNext: () => void }) {
+function QRPage({ onBack }: { onBack: () => void }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setVisible(true), 100);
+  }, []);
+
+  return (
+    <div
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 py-10"
+      style={{ background: "linear-gradient(160deg, #FFF0F7 0%, #F0F7FF 60%, #FFF5FB 100%)" }}
+    >
+      <FloatingEmoji emoji="🎀" style={{ top: "6%", left: "4%", animationDelay: "0s" }} />
+      <FloatingEmoji emoji="✨" style={{ top: "10%", right: "7%", animationDelay: "0.7s" }} />
+      <FloatingEmoji emoji="🌸" style={{ bottom: "20%", left: "3%", animationDelay: "1s" }} />
+      <FloatingEmoji emoji="💙" style={{ bottom: "10%", right: "5%", animationDelay: "0.4s" }} />
+
+      <div
+        className={`text-center transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+      >
+        <div className="text-5xl mb-3">📱</div>
+        <h2 className="font-display text-4xl md:text-5xl mb-2 shimmer-text">QR-код</h2>
+        <p className="text-gray-500 text-lg font-semibold mb-8">
+          Покажи гостям — пусть сканируют и голосуют!
+        </p>
+
+        <div
+          className="rounded-3xl p-8 mb-8 inline-block shadow-2xl border-4"
+          style={{ background: "white", borderColor: "#FFD6E8" }}
+        >
+          <QRCodeSVG
+            value={SITE_URL}
+            size={220}
+            fgColor="#FF6FB0"
+            bgColor="#FFFFFF"
+            level="M"
+            imageSettings={{
+              src: "",
+              height: 0,
+              width: 0,
+              excavate: false,
+            }}
+          />
+          <p className="text-gray-400 text-sm font-semibold mt-4 break-all max-w-[220px] mx-auto">
+            {SITE_URL}
+          </p>
+        </div>
+
+        <div>
+          <button
+            onClick={onBack}
+            className="btn-main font-bold text-white text-lg px-10 py-4 rounded-full shadow-lg"
+            style={{ background: "linear-gradient(135deg, #FF6FB0, #5EB8FF)" }}
+          >
+            ← Назад
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WelcomePage({ onNext, onQR }: { onNext: () => void; onQR: () => void }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -89,13 +154,22 @@ function WelcomePage({ onNext }: { onNext: () => void }) {
           <p className="text-gray-400 text-base mt-3">А пока — сделай свою ставку! 😄</p>
         </div>
 
-        <button
-          onClick={onNext}
-          className="btn-main font-display text-white text-2xl px-12 py-5 rounded-full shadow-2xl animate-pulse-glow"
-          style={{ background: "linear-gradient(135deg, #FF6FB0, #5EB8FF)" }}
-        >
-          Угадать! 🎯
-        </button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            onClick={onNext}
+            className="btn-main font-display text-white text-2xl px-12 py-5 rounded-full shadow-2xl animate-pulse-glow"
+            style={{ background: "linear-gradient(135deg, #FF6FB0, #5EB8FF)" }}
+          >
+            Угадать! 🎯
+          </button>
+          <button
+            onClick={onQR}
+            className="btn-main font-bold text-gray-600 text-lg px-8 py-5 rounded-full shadow border-2"
+            style={{ background: "white", borderColor: "#FFD6E8" }}
+          >
+            📱 QR-код
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -270,9 +344,10 @@ export default function Index() {
 
   return (
     <>
-      {page === "welcome" && <WelcomePage onNext={() => setPage("guess")} />}
+      {page === "welcome" && <WelcomePage onNext={() => setPage("guess")} onQR={() => setPage("qr")} />}
       {page === "guess" && <GuessPage onChoice={handleChoice} />}
       {page === "result" && <ResultPage choice={choice} />}
+      {page === "qr" && <QRPage onBack={() => setPage("welcome")} />}
     </>
   );
 }
