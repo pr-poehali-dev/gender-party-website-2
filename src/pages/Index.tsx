@@ -109,6 +109,33 @@ function WelcomePage({ onNext }: { onNext: () => void }) {
         }`}
         style={{ maxHeight: 260 }}
       />
+
+      <div
+        className={`mt-8 flex flex-col items-center gap-3 transition-all duration-1000 delay-500 ${
+          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
+      >
+        <p className="text-gray-500 font-semibold text-sm">📱 Отсканируй QR, чтобы открыть на телефоне</p>
+        <div className="bg-white p-4 rounded-2xl shadow-xl border-4 border-pink-100">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fgender-party-website-2--preview.poehali.dev%2F&color=C084FC&bgcolor=ffffff&qzone=1&format=png"
+            alt="QR код"
+            width={180}
+            height={180}
+            className="rounded-lg"
+          />
+        </div>
+        <a
+          href="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=https%3A%2F%2Fgender-party-website-2--preview.poehali.dev%2F&color=C084FC&bgcolor=ffffff&qzone=1&format=png"
+          download="gender-party-qr.png"
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm font-bold px-5 py-2 rounded-full border-2 transition-all hover:scale-105"
+          style={{ color: "#C084FC", borderColor: "#C084FC" }}
+        >
+          ⬇️ Скачать QR для печати
+        </a>
+      </div>
     </div>
   );
 }
